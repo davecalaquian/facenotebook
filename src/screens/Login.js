@@ -2,13 +2,24 @@ import React from 'react';
 import { View } from 'react-native';
 import FacebookLogin from '../components/FacebookLogin';
 
-export default class App extends React.Component {
+class Login extends React.Component {
 
     render() {
         return (
-        <View>
+        <View style={styles.viewStyle}>
             <FacebookLogin />
         </View>
         );
     }
 }
+
+const styles = {
+    viewStyle: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFFDDF'
+    }
+};
+
+export default Login;

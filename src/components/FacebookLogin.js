@@ -8,7 +8,9 @@ class FacebookLogin extends Component {
         super();
         this.handleLogin = this.handleLogin.bind(this);
     }
-    async handleLogin(){
+
+    
+    async handleLogin() {
         const APP_ID = '678398929176766';
         const { type, accessToken } = await Expo.Facebook.logInWithReadPermissionsAsync(APP_ID, {
             permissions: ['public_profile'],

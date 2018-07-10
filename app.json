@@ -4,6 +4,9 @@
     "splash": {
       "image": "./assets/splash.png",
       "backgroundColor": "#FFFDDF"
+    },
+    "androidStatusBar": {
+      "barStyle": "light-content"
     }
   }
 }
