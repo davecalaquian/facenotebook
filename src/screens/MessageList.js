@@ -10,17 +10,26 @@ import {
     Paragraph
 } from 'react-native-paper';
 
-class MessageList extends Component {
+
+
+class MessageListScreen extends Component {
+
+    static navigationOptions = {
+        title: 'Channels',
+    };
+
 
     render() {
+        const { navigation } = this.props;
+        const token = navigation.getParam('accessToken');
         return (
             <View>
                 <Card>
                     <CardContent>
-                        <Title>Room Title</Title>
+                        <Title>{JSON.stringify(token)}</Title>
                         <Paragraph>Room Description</Paragraph>
                     </CardContent>
-                    <CardCover source={{ uri: 'https://picsum.photos/700' }} />
+                    <CardCover source={{ uri: 'https://picsum.photos/600' }} />
                     <CardActions>
                         <Button>Join</Button>
                     </CardActions>
@@ -32,4 +41,4 @@ class MessageList extends Component {
 
 }
 
-export default MessageList;
+export default MessageListScreen;
