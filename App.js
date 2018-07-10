@@ -1,13 +1,22 @@
 import React from 'react';
-import { StatusBar, View } from 'react-native';
-import Login from './src/screens/Login';
-import MessageList from './src/screens/MessageList';
+import { View } from 'react-native';
+import { createStackNavigator } from 'react-navigation';
+import LoginScreen from './src/screens/Login';
+import MessageListScreen from './src/screens/MessageList';
+
+const RootStack = createStackNavigator({
+    Login: LoginScreen,
+    MessageList: MessageListScreen
+},
+{
+  initialRouteName: 'Login'
+});
 
 class App extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <MessageList />
+        <RootStack />
       </View>
     );
   }
