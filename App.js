@@ -3,10 +3,12 @@ import { View } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import LoginScreen from './src/screens/Login';
 import MessageListScreen from './src/screens/MessageList';
+import RoomScreen from './src/screens/Rooms';
 
 const RootStack = createStackNavigator({
     Login: LoginScreen,
-    MessageList: MessageListScreen
+    MessageList: MessageListScreen,
+    Room: RoomScreen
 },
 {
   initialRouteName: 'Login'
