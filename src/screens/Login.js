@@ -38,8 +38,7 @@ class LoginScreen extends React.Component {
             .then((res) => {
                 const accessToken = res.headers['x-auth-token'];
                 this.props.handleTokenStore(accessToken);
-                console.log(this.props.token);
-                // this.props.navigation.navigate('MessageList', { token: this.props.token }); 
+                this.props.navigation.navigate('MessageList'); 
             })
             .catch((err) => console.log(err));
         }
