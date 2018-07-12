@@ -6,7 +6,7 @@ import FacebookLogin from '../components/FacebookLogin';
 class LoginScreen extends React.Component {
 
     static navigationOptions = {
-        title: 'Login',
+        header: null
     };
 
     constructor() {
@@ -39,12 +39,15 @@ class LoginScreen extends React.Component {
             })
             .catch((err) => console.log(err));
         }
-        
     }
 
     render() {
         if (this.state.loading) {
-            return (<ActivityIndicator size='large' color='#000' />);
+            return (
+            <View style={styles.viewStyle}>
+                <ActivityIndicator size='large' color='#000' />
+            </View>
+            );
         }
 
         return (
