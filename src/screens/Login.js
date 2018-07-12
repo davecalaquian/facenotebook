@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import axios from 'axios';
+import { connect } from 'react-redux';
 import FacebookLogin from '../components/FacebookLogin';
+import { storeToken } from '../redux/actions/actions';
 
 class LoginScreen extends React.Component {
 
@@ -35,7 +37,8 @@ class LoginScreen extends React.Component {
             })
             .then((res) => {
                 const accessToken = res.headers['x-auth-token'];
-                this.props.navigation.navigate('MessageList', { accessToken });
+                this.props.handleTokenStore(accessToken);
+                this.props.navigation.navigate('MessageList'); 
             })
             .catch((err) => console.log(err));
         }
@@ -66,4 +69,16 @@ const styles = {
     }
 };
 
-export default LoginScreen;
+const mapStateToProps = state => {
+    return {
+        token: state.token
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        handleTokenStore: token => dispatch(storeToken(token))
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
