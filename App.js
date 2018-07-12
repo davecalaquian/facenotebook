@@ -1,5 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
+import { Provider } from 'react-redux';
+import store from './src/redux/store/store';
 import { createStackNavigator } from 'react-navigation';
 import LoginScreen from './src/screens/Login';
 import MessageListScreen from './src/screens/MessageList';
@@ -17,9 +19,11 @@ const RootStack = createStackNavigator({
 class App extends React.Component {
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <RootStack />
-      </View>
+      <Provider store={store}>
+        <View style={{ flex: 1 }}>
+          <RootStack />
+        </View>
+      </Provider>
     );
   }
 }
