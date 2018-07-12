@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View } from 'react-native';
+import { PulseIndicator } from "react-native-indicators";
 import axios from 'axios';
 import { connect } from 'react-redux';
 import FacebookLogin from '../components/FacebookLogin';
-import { storeToken } from '../redux/actions/actions';
+import { storeToken, loadTrigger, loadDismiss } from '../redux/actions/actions';
 
 class LoginScreen extends React.Component {
 
@@ -13,9 +14,6 @@ class LoginScreen extends React.Component {
 
     constructor() {
         super();
-        this.state = {
-            loading: false
-        };
         this.handleLogin = this.handleLogin.bind(this);
     }
 
@@ -24,9 +22,9 @@ class LoginScreen extends React.Component {
         const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(APP_ID, {
             permissions: ['public_profile'],
         });
-        console.log(token);
         if (type === 'success') {
-            this.setState({ loading: true });
+            console.log('Access Granted');
+            this.props.triggerLoad();
             axios({
                 method: 'post',
                 url: 'https://thawing-forest-31945.herokuapp.com/api/v1/auth/facebook',
@@ -38,6 +36,7 @@ class LoginScreen extends React.Component {
             .then((res) => {
                 const accessToken = res.headers['x-auth-token'];
                 this.props.handleTokenStore(accessToken);
+                this.props.dismissLoad();
                 this.props.navigation.navigate('MessageList'); 
             })
             .catch((err) => console.log(err));
@@ -45,18 +44,20 @@ class LoginScreen extends React.Component {
     }
 
     render() {
-        if (this.state.loading) {
+        if (this.props.loading) {
             return (
             <View style={styles.viewStyle}>
-                <ActivityIndicator size='large' color='#000' />
+                <PulseIndicator 
+                    size={100} 
+                    color='#000'
+                />
             </View>
             );
         }
-
         return (
-        <View style={styles.viewStyle}>
-            <FacebookLogin handleLogin={this.handleLogin} />
-        </View>
+            <View style={styles.viewStyle}>
+                <FacebookLogin handleLogin={this.handleLogin} />
+            </View>
         );
     }
 }
@@ -71,13 +72,16 @@ const styles = {
 
 const mapStateToProps = state => {
     return {
-        token: state.token
+        token: state.token.token,
+        loading: state.loading.loading
     };
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-        handleTokenStore: token => dispatch(storeToken(token))
+    return { 
+        handleTokenStore: token => dispatch(storeToken(token)), 
+        triggerLoad: () => dispatch(loadTrigger()),
+        dismissLoad: () => dispatch(loadDismiss())  
     };
 };
 
