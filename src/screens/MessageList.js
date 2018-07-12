@@ -49,9 +49,7 @@ class MessageListScreen extends Component {
                 { text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
                 { text: 'Yes', 
                     onPress: () => {
-                        const { navigation } = this.props;
-                        const token = navigation.getParam('token');
-                        this.props.navigation.navigate('Room', { token });
+                        this.props.navigation.navigate('Room');
                     } 
                 },
             ],
@@ -66,7 +64,7 @@ class MessageListScreen extends Component {
                     <View>
                         <Card>
                             <CardContent>
-                                <Title>{this.props.token}</Title>
+                                <Title>Room Title</Title>
                                 <Paragraph>Room Description</Paragraph>
                             </CardContent>
                             <CardCover source={{ uri: 'https://picsum.photos/600' }} />
