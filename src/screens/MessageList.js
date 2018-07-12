@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { ScrollView, Alert, View } from 'react-native';
+import { connect } from 'react-redux';
+import { AndroidBackHandler } from 'react-navigation-backhandler';
 import {
     Button,
     Card,
@@ -23,6 +25,20 @@ class MessageListScreen extends Component {
             loading: false
         };
         this.handleJoin = this.handleJoin.bind(this);
+        this.onBackButtonPressAndroid = this.onBackButtonPressAndroid.bind(this);
+    }
+
+    onBackButtonPressAndroid() {
+        Alert.alert(
+            'Do you want to logout?',
+            null,
+            [
+                { text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                { text: 'Yes', onPress: () => this.props.navigation.goBack() },
+            ],
+            { cancelable: false }
+        );
+        return true;
     }
 2
     handleJoin() {
@@ -34,7 +50,7 @@ class MessageListScreen extends Component {
                 { text: 'Yes', 
                     onPress: () => {
                         const { navigation } = this.props;
-                        const token = navigation.getParam('accessToken');
+                        const token = navigation.getParam('token');
                         this.props.navigation.navigate('Room', { token });
                     } 
                 },
@@ -43,51 +59,59 @@ class MessageListScreen extends Component {
         );
     }
 
-
     render() {
         return (
-            <ScrollView>
-                <View>
-                    <Card>
-                        <CardContent>
-                            <Title>Room Title</Title>
-                            <Paragraph>Room Description</Paragraph>
-                        </CardContent>
-                        <CardCover source={{ uri: 'https://picsum.photos/600' }} />
-                        <CardActions>
-                            <Button onPress={this.handleJoin}>Join</Button>
-                        </CardActions>
-                    </Card>
-                </View>
-                <View>
-                    <Card>
-                        <CardContent>
-                            <Title>Room Title</Title>
-                            <Paragraph>Room Description</Paragraph>
-                        </CardContent>
-                        <CardCover source={{ uri: 'https://picsum.photos/620' }} />
-                        <CardActions>
-                            <Button onPress={this.handleJoin}>Join</Button>
-                        </CardActions>
-                    </Card>
-                </View>
-                <View>
-                    <Card>
-                        <CardContent>
-                            <Title>Room Title</Title>
-                            <Paragraph>Room Description</Paragraph>
-                        </CardContent>
-                        <CardCover source={{ uri: 'https://picsum.photos/630' }} />
-                        <CardActions>
-                            <Button onPress={this.handleJoin}>Join</Button>
-                        </CardActions>
-                    </Card>
-                </View>
-            </ScrollView>
-
+            <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
+                <ScrollView>
+                    <View>
+                        <Card>
+                            <CardContent>
+                                <Title>{this.props.token}</Title>
+                                <Paragraph>Room Description</Paragraph>
+                            </CardContent>
+                            <CardCover source={{ uri: 'https://picsum.photos/600' }} />
+                            <CardActions>
+                                <Button onPress={this.handleJoin}>Join</Button>
+                            </CardActions>
+                        </Card>
+                    </View>
+                    <View>
+                        <Card>
+                            <CardContent>
+                                <Title>Room Title</Title>
+                                <Paragraph>Room Description</Paragraph>
+                            </CardContent>
+                            <CardCover source={{ uri: 'https://picsum.photos/620' }} />
+                            <CardActions>
+                                <Button onPress={this.handleJoin}>Join</Button>
+                            </CardActions>
+                        </Card>
+                    </View>
+                    <View>
+                        <Card>
+                            <CardContent>
+                                <Title>Room Title</Title>
+                                <Paragraph>Room Description</Paragraph>
+                            </CardContent>
+                            <CardCover source={{ uri: 'https://picsum.photos/630' }} />
+                            <CardActions>
+                                <Button onPress={this.handleJoin}>Join</Button>
+                            </CardActions>
+                        </Card>
+                    </View>
+                </ScrollView>
+            </AndroidBackHandler>
         );
     }
 
 }
 
-export default MessageListScreen;
+
+const mapStateToProps = state => {
+    return {
+        token: state.token
+    };
+};
+
+
+export default connect(mapStateToProps, null)(MessageListScreen);
