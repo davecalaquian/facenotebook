@@ -36,7 +36,6 @@ class LoginScreen extends React.Component {
             .then((res) => {
                 const accessToken = res.headers['x-auth-token'];
                 this.props.handleTokenStore(accessToken);
-                console.log('redux token', this.props.token);
                 this.props.dismissLoad();
                 this.props.navigation.navigate('MessageList'); 
             })

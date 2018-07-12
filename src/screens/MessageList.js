@@ -28,6 +28,10 @@ class MessageListScreen extends Component {
         this.onBackButtonPressAndroid = this.onBackButtonPressAndroid.bind(this);
     }
 
+    componentDidMount() {
+        this.authenticateToken(this.props.token);
+    }
+
     onBackButtonPressAndroid() {
         Alert.alert(
             'Do you want to logout?',
@@ -39,6 +43,22 @@ class MessageListScreen extends Component {
             { cancelable: false }
         );
         return true;
+    }
+
+
+
+    authenticateToken(token) {
+        if (token !== '') {
+            // this.props.navigation.navigate('Login');
+            Alert.alert(
+                'You do not have access to this page. Please try logging in again.',
+                null,
+                [
+                    { text: 'Exit Now', onPress: () => this.props.navigation.navigate('Login') },
+                ],
+                { cancelable: false }
+            );
+        }
     }
 2
     handleJoin() {
