@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { PulseIndicator } from "react-native-indicators";
+import { BarIndicator } from "react-native-indicators";
 import axios from 'axios';
 import { connect } from 'react-redux';
 import FacebookLogin from '../components/FacebookLogin';
@@ -17,38 +17,38 @@ class LoginScreen extends React.Component {
         this.handleLogin = this.handleLogin.bind(this);
     }
 
-    async handleLogin() {
-        const APP_ID = '678398929176766';
-        const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(APP_ID, {
-            permissions: ['public_profile'],
-        });
-        if (type === 'success') {
-            console.log('Access Granted');
-            this.props.triggerLoad();
-            axios({
-                method: 'post',
-                url: 'https://thawing-forest-31945.herokuapp.com/api/v1/auth/facebook',
-                headers: {
-                  'Access-Control-Allow-Origin': '*', 
-                  'Authorization': `Bearer ${token}`,
-                }
-            })
-            .then((res) => {
-                const accessToken = res.headers['x-auth-token'];
-                this.props.handleTokenStore(accessToken);
-                this.props.dismissLoad();
-                this.props.navigation.navigate('MessageList'); 
-            })
-            .catch((err) => console.log(err));
-        }
+    handleLogin() {
+        // const APP_ID = '678398929176766';
+        // const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(APP_ID, {
+        //     permissions: ['public_profile'],
+        // });
+        // this.props.triggerLoad();
+        // if (type === 'success') {
+        //     console.log('Access Granted');
+        //     axios({
+        //         method: 'post',
+        //         url: 'https://thawing-forest-31945.herokuapp.com/api/v1/auth/facebook',
+        //         headers: {
+        //           'Access-Control-Allow-Origin': '*', 
+        //           'Authorization': `Bearer ${token}`,
+        //         }
+        //     })
+        //     .then((res) => {
+        //         const accessToken = res.headers['x-auth-token'];
+        //         this.props.handleTokenStore(accessToken);
+        //         this.props.navigation.navigate('MessageList'); 
+        //     })
+        //     .catch((err) => console.log(err));
+        // }
+        this.props.navigation.navigate('MessageList'); 
     }
 
     render() {
         if (this.props.loading) {
             return (
             <View style={styles.viewStyle}>
-                <PulseIndicator 
-                    size={100} 
+                <BarIndicator 
+                    size={40} 
                     color='#000'
                 />
             </View>

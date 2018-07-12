@@ -11,11 +11,12 @@ import {
     Title,
     Paragraph
 } from 'react-native-paper';
+import { loadTrigger, loadDismiss } from "../redux/actions/actions";
 
 class MessageListScreen extends Component {
 
     static navigationOptions = {
-        title: 'Rooms List',
+        headerTitle: 'Channels',
         headerLeft: null
     };
 
@@ -28,9 +29,9 @@ class MessageListScreen extends Component {
         this.onBackButtonPressAndroid = this.onBackButtonPressAndroid.bind(this);
     }
 
-    componentDidMount() {
-        this.authenticateToken(this.props.token);
-    }
+    // componentDidMount() {
+    //     this.authenticateToken(this.props.token);
+    // }
 
     onBackButtonPressAndroid() {
         Alert.alert(
@@ -45,10 +46,8 @@ class MessageListScreen extends Component {
         return true;
     }
 
-
-
     authenticateToken(token) {
-        if (token !== '') {
+        if (token === '') {
             // this.props.navigation.navigate('Login');
             Alert.alert(
                 'You do not have access to this page. Please try logging in again.',
@@ -124,12 +123,19 @@ class MessageListScreen extends Component {
 
 }
 
-
 const mapStateToProps = state => {
     return {
-        token: state.token
+        token: state.token.loading,
+        loading: state.loading.loading
     };
 };
 
+const mapDispatchToProps = dispatch => {
+    return {
+        handleTokenStore: token => dispatch(storeToken(token)),
+        triggerLoad: () => dispatch(loadTrigger()),
+        dismissLoad: () => dispatch(loadDismiss())
+    };
+};
 
-export default connect(mapStateToProps, null)(MessageListScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(MessageListScreen);
