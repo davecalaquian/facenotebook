@@ -17,13 +17,14 @@ class RoomScreen extends Component {
       <KeyboardAvoidingView style={styles.mainView}>
 
         <View style={styles.messagesContainer}>
-          <Text>Hello</Text>
+          <Text>This is a chat</Text>
         </View>
 
         <View style={styles.bottomContainer}>
           <View style={styles.textInputContainerStyle}>
             <TextInput
               multiline
+              numberOfLines={2}
               underlineColorAndroid='transparent'
               placeholder='Enter a message'
               style={styles.textInputStyle}
@@ -33,7 +34,7 @@ class RoomScreen extends Component {
             onPress={() => console.log('Pressed')}
             style={styles.buttonStyle}
           >
-          Send
+            <Text style={styles.buttonTextStyle}>Send</Text>
           </Button>
         </View>
       </KeyboardAvoidingView>
@@ -46,26 +47,34 @@ const styles = {
     flex: 1
   },
   messagesContainer: {
-    flex: 1,
-    backgroundColor: '#FFFDDF'
+    flex: 1
   },
   bottomContainer: {
     flexDirection: 'row',
     padding: 10,
-    height: 70,
-    backgroundColor: 'transparent'
+    height: null,
+    maxHeight: 150,
+    borderTopColor: '#fff',
   },
   textInputContainerStyle: {
-    flex: 1,
-    height: 40
+    flex: 1
   },
   textInputStyle: {
-    fontSize: 18
+    fontSize: 18,
+    borderRadius: 30,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderColor: '#000',
   },
   buttonStyle: {
-    height: 40,
-    backgroundColor: '#fff',
-    borderRadius: 50
+    backgroundColor: '#0d48a8',
+    borderRadius: 50,
+    padding: 10,
+    maxHeight: 60
+  },
+  buttonTextStyle: {
+    color: '#fff',
+    fontSize: 16
   }
 };
 
