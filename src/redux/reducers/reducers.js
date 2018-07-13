@@ -19,8 +19,8 @@ function loading(state = initialState, action) {
             return { ...state, loading: true };
         case LOAD_DISMISS:
             return { ...state, loading: false };
-      default:
-        return state;
+        default:
+            return state;
     }
 }
 
@@ -38,8 +38,6 @@ function message(state = initialState, action) {
         case TYPE_MESSAGE:
             return { ...state, message: action.payload };
         case SEND_MESSAGE:
-            console.log(state.chatBox);
-            console.log(state.message);
             return { ...state, chatBox: [...state.chatBox, action.payload], message: '' };
         default:
             return state;

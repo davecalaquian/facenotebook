@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { 
-  View, 
+  View,
+  ScrollView, 
   Text, 
   KeyboardAvoidingView,
   TextInput } from 'react-native';
@@ -20,19 +21,52 @@ class RoomScreen extends Component {
 
   handleTextChange(message) {
     this.props.typeMessage(message);
-    console.log(this.props.message);
   }
 
   handleSendMessage() {
-    this.props.sendMessage(this.props.message);
+    if (this.props.message) {
+      this.props.sendMessage(this.props.message.trim());
+    }
+  }
+
+  loadMessages() {
+    // console.log(this.props.chatBox);
+    return this.props.chatBox.map((chatBubble, id) => {
+      return (
+        <Text 
+          key={id}
+          style={styles.textMessageStyle}
+        >
+        {chatBubble}
+        </Text>
+      );
+  });
   }
 
   render() {
     return (
       <KeyboardAvoidingView style={styles.mainView}>
-        <View style={styles.messagesContainer}>
-          <Text>This is a chat</Text>
-        </View>
+        <ScrollView style={styles.scrollViewStyle}>
+          <View 
+            style={{ 
+              flexDirection: 'row', 
+              flex: 1, 
+              paddingTop: 15
+            }}
+          >
+            <View style={{ flex: 1 }} />
+            <View 
+              style={{ 
+                flex: 1, 
+                alignItems: 'flex-end', 
+                justifyContent: 'flex-end',
+                marginRight: 10
+              }}
+            >
+              {this.loadMessages()}
+            </View>
+          </View> 
+        </ScrollView>
         <View style={styles.bottomContainer}>
           <View style={styles.textInputContainerStyle}>
             <TextInput
@@ -62,8 +96,8 @@ const styles = {
   mainView: {
     flex: 1
   },
-  messagesContainer: {
-    flex: 1
+  scrollViewStyle: {
+    flex: 1,
   },
   bottomContainer: {
     flexDirection: 'row',
@@ -80,6 +114,7 @@ const styles = {
     borderRadius: 30,
     backgroundColor: '#fff',
     padding: 10,
+    paddingLeft: 20,
     borderColor: '#000',
   },
   buttonStyle: {
@@ -91,15 +126,24 @@ const styles = {
   buttonTextStyle: {
     color: '#fff',
     fontSize: 16
+  },
+  textMessageStyle: {
+    borderRadius: 30,
+    borderBottomRightRadius: 0,
+    backgroundColor: '#0076FF',
+    color: '#fff',
+    padding: 15,
+    margin: 5,
+    maxWidth: 200
   }
 };
 
 const mapStateToProps = state => {
   return {
-    token: state.token.loading,
+    token: state.token.token,
     loading: state.loading.loading,
     message: state.message.message,
-    chatBox: state.chatBox
+    chatBox: state.message.chatBox
   };
 };
 
