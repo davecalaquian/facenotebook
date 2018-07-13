@@ -111,6 +111,7 @@ const styles = {
   },
   textInputStyle: {
     fontSize: 18,
+    height: 60,
     borderRadius: 30,
     backgroundColor: '#fff',
     padding: 10,
