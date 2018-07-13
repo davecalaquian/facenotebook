@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import axios from 'axios';
+import openSocket from 'socket.io-client';
 import { 
   View,
   ScrollView, 
@@ -19,6 +21,32 @@ class RoomScreen extends Component {
     headerTitle: 'Room Title'
   };
 
+  constructor() {
+    super();
+    this.state = {
+      chat: [],
+      endpoint: 'https://f46cccf6.ngrok.io',
+      temp: ''
+    };
+  }
+
+  componentWillMount() {
+    axios.get('https://f46cccf6.ngrok.io/api/v1/chat/5b48939b35f54c24822e021e')
+      .then(response => this.setState({
+        chat: response.data.conversation
+      }));
+  }
+
+  componentDidMount() {
+    const { endpoint } = this.state;
+    const socket = openSocket(endpoint);
+    socket.emit('ENTER_CONVERSATION', '5b48939b35f54c24822e021e');
+    socket.on('NEW_MESSAGE', (data) => {
+      // console.log(data.currentMessage);
+      this.setState({ chat: [...this.state.chat, data.currentMessage] });
+    });
+  }
+
   handleTextChange(message) {
     this.props.typeMessage(message);
   }
@@ -31,13 +59,14 @@ class RoomScreen extends Component {
 
   loadMessages() {
     // console.log(this.props.chatBox);
-    return this.props.chatBox.map((chatBubble, id) => {
+    return this.state.chat.map((message, id) => {
+      console.log(message.body);
       return (
         <Text 
           key={id}
           style={styles.textMessageStyle}
         >
-        {chatBubble}
+        {message.body}
         </Text>
       );
   });
