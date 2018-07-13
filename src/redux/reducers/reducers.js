@@ -1,9 +1,16 @@
 import { combineReducers } from 'redux';
-import { STORE_TOKEN, LOAD_TRIGGER, LOAD_DISMISS } from '../actions/actions';
+import { 
+    STORE_TOKEN, 
+    LOAD_TRIGGER, 
+    LOAD_DISMISS,
+    TYPE_MESSAGE,
+    SEND_MESSAGE } from '../actions/actions';
 
 const initialState = {
     token: '',
-    loading: false
+    loading: false,
+    message: '',
+    chatBox: []
 };
 
 function loading(state = initialState, action) {
@@ -26,9 +33,23 @@ function token(state = initialState, action) {
     }
 }
 
+function message(state = initialState, action) {
+    switch (action.type) {
+        case TYPE_MESSAGE:
+            return { ...state, message: action.payload };
+        case SEND_MESSAGE:
+            console.log(state.chatBox);
+            console.log(state.message);
+            return { ...state, chatBox: [...state.chatBox, action.payload], message: '' };
+        default:
+            return state;
+    }
+}
+
 const chatApp = combineReducers({
     token,
-    loading
+    loading,
+    message
 });
 
 export default chatApp;

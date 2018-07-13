@@ -11,7 +11,7 @@ import {
     Title,
     Paragraph
 } from 'react-native-paper';
-import { loadTrigger, loadDismiss } from "../redux/actions/actions";
+import { loadTrigger, loadDismiss } from '../redux/actions/actions';
 
 class MessageListScreen extends Component {
 
