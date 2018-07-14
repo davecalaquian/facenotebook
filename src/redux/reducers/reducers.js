@@ -4,14 +4,27 @@ import {
     LOAD_TRIGGER, 
     LOAD_DISMISS,
     TYPE_MESSAGE,
-    SEND_MESSAGE } from '../actions/actions';
+    SEND_MESSAGE,
+    STORE_CONVO_ID,
+    STORE_USER_ID } from '../actions/actions';
 
 const initialState = {
     token: '',
+    userId: '',
     loading: false,
+    convoId: '',
     message: '',
     chatBox: []
 };
+
+function user(state = initialState, action) {
+    switch (action.type) {
+        case STORE_USER_ID:
+            return { ...state, userId: action.payload };
+        default:
+            return state;
+    }
+}
 
 function loading(state = initialState, action) {
     switch (action.type) {
@@ -37,6 +50,8 @@ function message(state = initialState, action) {
     switch (action.type) {
         case TYPE_MESSAGE:
             return { ...state, message: action.payload };
+        case STORE_CONVO_ID:
+            return { ...state, convoId: action.payload };
         case SEND_MESSAGE:
             return { ...state, chatBox: [...state.chatBox, action.payload], message: '' };
         default:
@@ -45,6 +60,7 @@ function message(state = initialState, action) {
 }
 
 const chatApp = combineReducers({
+    user,
     token,
     loading,
     message

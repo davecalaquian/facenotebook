@@ -2,48 +2,56 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import openSocket from 'socket.io-client';
+import { BarIndicator } from "react-native-indicators";
 import { 
   View,
   ScrollView, 
   Text, 
   KeyboardAvoidingView,
-  TextInput } from 'react-native';
+  TextInput,
+  Keyboard } from 'react-native';
   import { Button } from 'react-native-paper';
 import { 
   loadTrigger, 
   loadDismiss, 
   typeMessage,
-  sendMessage } from '../redux/actions/actions';
+  sendMessage,
+  storeConvoId } from '../redux/actions/actions';
+
 
 class RoomScreen extends Component {
-
+  
   static navigationOptions = {
-    headerTitle: 'Room Title'
+    headerTitle: 'Room Title',
   };
 
   constructor() {
     super();
     this.state = {
       chat: [],
-      endpoint: 'https://f46cccf6.ngrok.io',
-      temp: ''
+      temp: '',
+      convoId: ''
     };
+    this.socket = openSocket('https://cdb4af5a.ngrok.io');
   }
 
   componentWillMount() {
-    axios.get('https://f46cccf6.ngrok.io/api/v1/chat/5b48939b35f54c24822e021e')
-      .then(response => this.setState({
-        chat: response.data.conversation
-      }));
+    // this.setState({
+    //   convoId
+    // });
+    this.props.triggerLoad();
+    axios.get(`https://cdb4af5a.ngrok.io/api/v1/chat/${this.props.convoId}`)
+      .then(response => {
+        this.setState({ chat: response.data.conversation });
+        this.props.dismissLoad();
+      })
+      .catch(error => console.log(error));
   }
 
   componentDidMount() {
-    const { endpoint } = this.state;
-    const socket = openSocket(endpoint);
-    socket.emit('ENTER_CONVERSATION', '5b48939b35f54c24822e021e');
-    socket.on('NEW_MESSAGE', (data) => {
-      // console.log(data.currentMessage);
-      this.setState({ chat: [...this.state.chat, data.currentMessage] });
+    this.socket.emit('ENTER_CONVERSATION', `${this.props.convoId}`);
+    this.socket.on('NEW_MESSAGE', (data) => {
+      this.setState({ chat: [...this.state.chat, data] });
     });
   }
 
@@ -54,47 +62,68 @@ class RoomScreen extends Component {
   handleSendMessage() {
     if (this.props.message) {
       this.props.sendMessage(this.props.message.trim());
+      axios({
+        method: 'post',
+        url: `https://cdb4af5a.ngrok.io/api/v1/chat/${this.props.convoId}`,
+        data: {
+          composedMessage: this.props.message,
+          from: this.props.userId
+        }
+      })
+        .then((res) => {
+          this.socket.emit('NEW_MESSAGE', { ...res.data.currentMessage });
+        })
+        .catch((err) => console.log(err));
     }
   }
 
   loadMessages() {
     // console.log(this.props.chatBox);
     return this.state.chat.map((message, id) => {
-      console.log(message.body);
+      if (message.author.id === this.props.userId) {
+        return (
+          <View key={id} style={{ alignItems: 'flex-end' }}>
+            <View style={{ maxWidth: 200 }}>
+              <Text style={{ ...styles.textMessageStyleSender, color: '#fff' }} >
+                {message.body}
+              </Text>
+            </View>
+          </View>
+        );
+      }
       return (
-        <Text 
-          key={id}
-          style={styles.textMessageStyle}
-        >
-        {message.body}
-        </Text>
+        <View key={id} style={{ alignItems: 'flex-start' }}>
+          <View style={{ maxWidth: 200 }}>
+            <Text style={styles.textMessageStyleReceiver}>
+              {message.body}
+            </Text>
+          </View>
+        </View>
       );
   });
   }
 
   render() {
+    if (this.props.loading) {
+      return (
+        <View style={styles.viewStyle}>
+          <BarIndicator
+            size={40}
+            color='#000'
+          />
+        </View>
+      );
+    }
     return (
       <KeyboardAvoidingView style={styles.mainView}>
-        <ScrollView style={styles.scrollViewStyle}>
-          <View 
-            style={{ 
-              flexDirection: 'row', 
-              flex: 1, 
-              paddingTop: 15
-            }}
-          >
-            <View style={{ flex: 1 }} />
-            <View 
-              style={{ 
-                flex: 1, 
-                alignItems: 'flex-end', 
-                justifyContent: 'flex-end',
-                marginRight: 10
-              }}
-            >
-              {this.loadMessages()}
-            </View>
-          </View> 
+        <ScrollView 
+          style={styles.scrollViewStyle}
+          ref={ref => this.scrollView = ref}
+          onContentSizeChange={() => {
+            this.scrollView.scrollToEnd({ animated: true });
+          }}
+        >
+          {this.loadMessages()}
         </ScrollView>
         <View style={styles.bottomContainer}>
           <View style={styles.textInputContainerStyle}>
@@ -110,7 +139,10 @@ class RoomScreen extends Component {
             />
           </View>
           <Button
-            onPress={() => this.handleSendMessage()}
+            onPress={() => {
+              this.handleSendMessage();
+              Keyboard.dismiss();
+            }}
             style={styles.buttonStyle}
           >
             <Text style={styles.buttonTextStyle}>Send</Text>
@@ -124,6 +156,11 @@ class RoomScreen extends Component {
 const styles = {
   mainView: {
     flex: 1
+  },
+  viewStyle: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   scrollViewStyle: {
     flex: 1,
@@ -157,14 +194,20 @@ const styles = {
     color: '#fff',
     fontSize: 16
   },
-  textMessageStyle: {
+  textMessageStyleSender: {
     borderRadius: 30,
     borderBottomRightRadius: 0,
     backgroundColor: '#0076FF',
-    color: '#fff',
+    padding: 15,
+    margin: 5
+  },
+  textMessageStyleReceiver: {
+    borderRadius: 30,
+    borderBottomLeftRadius: 0,
+    backgroundColor: '#ffd27f',
     padding: 15,
     margin: 5,
-    maxWidth: 200
+    alignItems: 'flex-end',
   }
 };
 
@@ -173,7 +216,9 @@ const mapStateToProps = state => {
     token: state.token.token,
     loading: state.loading.loading,
     message: state.message.message,
-    chatBox: state.message.chatBox
+    chatBox: state.message.chatBox,
+    convoId: state.message.convoId,
+    userId: state.user.userId
   };
 };
 
@@ -182,7 +227,9 @@ const mapDispatchToProps = dispatch => {
     triggerLoad: () => dispatch(loadTrigger()),
     dismissLoad: () => dispatch(loadDismiss()),
     typeMessage: (message) => dispatch(typeMessage(message)),
-    sendMessage: (message) => dispatch(sendMessage(message))
+    sendMessage: (message) => dispatch(sendMessage(message)),
+    storeConvoId: (convoId) => dispatch(storeConvoId(convoId)),
+    storeUserId: (userId) => dispatch(storeUserId(userId))  
   };
 };
 

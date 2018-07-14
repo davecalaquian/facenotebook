@@ -1,6 +1,8 @@
 {
     "extends": "rallycoding",
     "rules": {
-        "no-undef": 0
+        "no-undef": 0,
+        "no-underscore-dangle": 0,
+        "no-return-as-sign": 0,
     }
 }
